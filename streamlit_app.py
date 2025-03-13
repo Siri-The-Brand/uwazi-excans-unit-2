@@ -135,13 +135,18 @@ if time_block:
 
 # --- REAL-TIME PROGRESS UPDATE ---
 st.markdown("### 📊 Live Progress Updates")
-if student_name:
-    student_progress = list(collection_tasks.find({"Student": student_name}))
+
+# Define student name
+selected_student = st.selectbox("Select Student", [s["Student Name"] for s in collection_students.find()])
+
+if selected_student:
+    student_progress = list(collection_tasks.find({"Student": selected_student}))
+    
     if student_progress:
         progress_df = pd.DataFrame(student_progress)
         st.dataframe(progress_df)
     else:
-        st.warning("🚨 No tasks started yet!")
+        st.write("No progress recorded yet.")
 
 # --- ADMIN DASHBOARD ---
 st.markdown("### 🔐 Admin Dashboard")
