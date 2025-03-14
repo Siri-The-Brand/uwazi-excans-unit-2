@@ -49,14 +49,25 @@ st.set_page_config(page_title="Uwazi Unit 2", page_icon="🎭", layout="wide")
 st.title("🌟 Uwazi Unit 2: Theatrical Innovations")
 st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 
-# Define Unit Schedule
+# Define Unit Schedule with 18 tasks properly structured
 unit_schedule = pd.DataFrame({
-    "Day": ["Day 1", "Day 2", "Day 3"],
-    "Time Block": ["Soma Time", "Siri Time", "Solver Time"],
+    "Day": [
+        "Day 1", "Day 1", "Day 1", "Day 1", "Day 1", "Day 1",
+        "Day 2", "Day 2", "Day 2", "Day 2", "Day 2", "Day 2",
+        "Day 3", "Day 3", "Day 3", "Day 3", "Day 3", "Day 3"
+    ],
+    "Time Block": [
+        "Soma Time", "Siri Time", "Solver Time", "Soma Time", "Siri Time", "Solver Time",
+        "Soma Time", "Siri Time", "Solver Time", "Soma Time", "Siri Time", "Solver Time",
+        "Soma Time", "Siri Time", "Solver Time", "Soma Time", "Siri Time", "Solver Time"
+    ],
     "Task": [
         "Logical Problem-Solving", "Creative Motion Expression", "Team Challenge",
         "Numerical Analysis", "Balance & Coordination", "Puzzle Deduction",
-        "Inductive Reasoning", "Acrobatic Challenge", "Physical Coordination"
+        "Inductive Reasoning", "Acrobatic Challenge", "Physical Coordination",
+        "Pattern Recognition", "Statistical Analysis", "Critical Thinking",
+        "Mathematical Operations", "Dexterity Challenge", "Strategic Thinking",
+        "Abstract Reasoning", "Reflex & Speed Test", "Real-World Simulation"
     ]
 })
 
