@@ -7,6 +7,7 @@ from datetime import datetime
 # --------------------------
 # FILE PATHS
 # --------------------------
+CLASSES_CSV = "classes.csv"
 STUDENT_CSV = "students.csv"
 TASKS_ASSIGNED_CSV = "tasks_assigned.csv"
 TASKS_LIST_CSV = "tasks_list.csv"
@@ -23,6 +24,7 @@ def initialize_csv(file_path, columns):
         df.to_csv(file_path, index=False)
 
 # Ensuring all required CSVs exist
+initialize_csv(CLASSES_CSV, ["Class Code", "Class Name", "CSE"])
 initialize_csv(STUDENT_CSV, ["Student Name", "Class Code"])
 initialize_csv(TASKS_ASSIGNED_CSV, ["Student", "Task Name", "Day", "Time Block", "CSE"])
 initialize_csv(SCORES_CSV, ["Student", "XP", "Rating", "Umeme"])
@@ -65,6 +67,17 @@ def calculate_umeme(start_time, end_time):
     else:
         return 5
 
+def ai_feedback(text):
+    """Simple AI-generated feedback for text submissions."""
+    if not text:
+        return "No response provided."
+    elif len(text) < 50:
+        return "Try expanding your response with more details."
+    elif "because" in text or "reason" in text:
+        return "Great job explaining your reasoning!"
+    else:
+        return "Good effort! Consider adding examples or deeper insights."
+
 # --------------------------
 # STREAMLIT CONFIG & HEADER
 # --------------------------
@@ -77,85 +90,204 @@ st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 # --------------------------
 menu_option = st.sidebar.radio("Navigation", [
     "🏫 Class Management",
-    "📅 View Tasks & Assignments",
     "📊 CSE Dashboard",
     "🎓 Student Dashboard",
     "🔐 Admin Dashboard"
 ])
 
 # --------------------------
-# CSE DASHBOARD: ASSIGN TASKS
+# 🏫 CLASS MANAGEMENT (CSEs create classes)
 # --------------------------
-if menu_option == "📊 CSE Dashboard":
+if menu_option == "🏫 Class Management":
+    st.markdown("### 🏫 Manage Your Class")
+
+    cse_name = st.text_input("Enter Your Name (CSE)")
+    class_name = st.text_input("Enter Class Name")
+    class_code = generate_code()
+
+    if st.button("Create Class"):
+        df_classes = pd.read_csv(CLASSES_CSV)
+        new_class = pd.DataFrame({"Class Code": [class_code], "Class Name": [class_name], "CSE": [cse_name]})
+        df_classes = pd.concat([df_classes, new_class], ignore_index=True)
+        df_classes.to_csv(CLASSES_CSV, index=False)
+        st.success(f"✅ Class '{class_name}' created! Class Code: {class_code}")
+
+# --------------------------
+# 📊 CSE DASHBOARD: ASSIGN TASKS TO STUDENTS IN THEIR CLASS
+# --------------------------
+elif menu_option == "📊 CSE Dashboard":
     st.markdown("### 📊 CSE Dashboard - Assign Tasks")
 
-    # Load student list
-    student_df = pd.read_csv(STUDENT_CSV)
-    if student_df.empty:
-        st.warning("No students have joined any classes yet.")
+    # Load CSE's classes
+    df_classes = pd.read_csv(CLASSES_CSV)
+    if df_classes.empty:
+        st.warning("No classes created yet. Create one in 'Class Management'.")
     else:
-        student_names = student_df["Student Name"].tolist()
-        selected_student = st.selectbox("Select Student", student_names)
+        cse_classes = df_classes["Class Code"].tolist()
+        selected_class = st.selectbox("Select Your Class", cse_classes)
 
-        # Select Day & Time Block
-        day_choice = st.selectbox("Select Day", ["Day 1", "Day 2", "Day 3", "Day 4"])
-        task_df = pd.read_csv(TASKS_LIST_CSV)
-        task_options = task_df[task_df["Day"] == day_choice][["Element", "Task Name", "Description", "Resources"]]
+        # Get students in this class
+        student_df = pd.read_csv(STUDENT_CSV)
+        students_in_class = student_df[student_df["Class Code"] == selected_class]["Student Name"].tolist()
 
-        # Display available tasks
-        st.markdown("### Available Tasks for Selected Day")
-        st.dataframe(task_options)
+        if students_in_class:
+            selected_student = st.selectbox("Select Student", students_in_class)
 
-        selected_task = st.selectbox("Select Task", task_options["Task Name"].tolist())
+            # Select Day & Task
+            day_choice = st.selectbox("Select Day", ["Day 1", "Day 2", "Day 3", "Day 4"])
+            task_df = pd.read_csv(TASKS_LIST_CSV)
+            task_options = task_df[task_df["Day"] == day_choice]
 
-        # Assign Task
-        if st.button("Assign Task"):
-            assigned_tasks = pd.read_csv(TASKS_ASSIGNED_CSV)
-            new_task = pd.DataFrame({
-                "Student": [selected_student],
-                "Task Name": [selected_task],
-                "Day": [day_choice],
-                "Time Block": [task_options[task_options["Task Name"] == selected_task]["Element"].values[0]],
-                "CSE": ["CSE Name Placeholder"]
-            })
-            assigned_tasks = pd.concat([assigned_tasks, new_task], ignore_index=True)
-            assigned_tasks.to_csv(TASKS_ASSIGNED_CSV, index=False)
-            st.success(f"✅ Assigned '{selected_task}' to {selected_student}!")
+            # Display available tasks
+            st.dataframe(task_options)
+            selected_task = st.selectbox("Select Task", task_options["Task Name"].tolist())
+
+            # Assign Task
+            if st.button("Assign Task"):
+                assigned_tasks = pd.read_csv(TASKS_ASSIGNED_CSV)
+                new_task = pd.DataFrame({
+                    "Student": [selected_student],
+                    "Task Name": [selected_task],
+                    "Day": [day_choice],
+                    "Time Block": [task_options[task_options["Task Name"] == selected_task]["Element"].values[0]],
+                    "CSE": ["CSE Name Placeholder"]
+                })
+                assigned_tasks = pd.concat([assigned_tasks, new_task], ignore_index=True)
+                assigned_tasks.to_csv(TASKS_ASSIGNED_CSV, index=False)
+                st.success(f"✅ Assigned '{selected_task}' to {selected_student}!")
+                # View submissions
+            st.markdown("### 📌 Review Student Work")
+            df_submissions = pd.read_csv(SUBMISSIONS_CSV)
+
+            if not df_submissions.empty:
+                st.dataframe(df_submissions)
+                submission_students = df_submissions["Student"].unique().tolist()
+                selected_student_review = st.selectbox("Select Student to Assess", submission_students)
+                
+                student_submissions = df_submissions[df_submissions["Student"] == selected_student_review]
+                selected_task_review = st.selectbox("Select Task to Review", student_submissions["Task Name"].unique().tolist())
+
+                task_details = student_submissions[student_submissions["Task Name"] == selected_task_review].iloc[0]
+                st.markdown(f"📂 **File Submitted:** {task_details['File Name']}  \n📅 **Submission Time:** {task_details['Submission Time']}")
+
+                # Assign a rating
+                rating = st.selectbox("Rate the Submission", ["Excellent", "Great", "Good", "Needs Improvement"])
+                xp_awarded = calculate_xp(rating)
+
+                if st.button("Save Rating"):
+                    df_scores = pd.read_csv(SCORES_CSV)
+                    new_entry = pd.DataFrame({
+                        "Student": [selected_student_review],
+                        "XP": [xp_awarded],
+                        "Rating": [rating],
+                        "Umeme": [0]
+                    })
+                    df_scores = pd.concat([df_scores, new_entry], ignore_index=True)
+                    df_scores.to_csv(SCORES_CSV, index=False)
+                    st.success(f"✅ Rating Saved! {selected_student_review} earned {xp_awarded} XP!")
+
 
 # --------------------------
-# STUDENT DASHBOARD: VIEW & SUBMIT TASKS
+# 🎓 STUDENT DASHBOARD: JOIN CLASS, VIEW TASKS, SUBMIT WORK
 # --------------------------
 elif menu_option == "🎓 Student Dashboard":
-    st.markdown("### 🎓 Student Dashboard - My Tasks")
+    st.markdown("### 🎓 Student Dashboard - Join Class & Submit Work")
 
-    student_name = st.text_input("Enter Your Name (Siri Solver)")
-    
-    if student_name:
-        assigned_df = pd.read_csv(TASKS_ASSIGNED_CSV)
-        student_tasks = assigned_df[assigned_df["Student"] == student_name]
+    student_name = st.text_input("Enter Your Name")
+    class_code = st.text_input("Enter Class Code")
 
-        if student_tasks.empty:
-            st.warning("No tasks assigned yet.")
-        else:
-            st.markdown("### My Assigned Tasks")
-            st.dataframe(student_tasks)
+    if st.button("Join Class"):
+        df_students = pd.read_csv(STUDENT_CSV)
+        new_entry = pd.DataFrame({"Student Name": [student_name], "Class Code": [class_code]})
+        df_students = pd.concat([df_students, new_entry], ignore_index=True)
+        df_students.to_csv(STUDENT_CSV, index=False)
+        st.success(f"✅ {student_name} joined class {class_code}!")
 
-            # Select a task to submit
-            selected_task = st.selectbox("Select Task to Submit", student_tasks["Task Name"].tolist())
+    # --------------------------
+    # VIEW & SUBMIT ASSIGNED TASKS
+    # --------------------------
+    assigned_df = pd.read_csv(TASKS_ASSIGNED_CSV)
+    student_tasks = assigned_df[assigned_df["Student"] == student_name]
+
+    if not student_tasks.empty:
+        st.markdown("### 📌 My Assigned Tasks")
+        st.dataframe(student_tasks)
+
+        selected_task = st.selectbox("Select Task to Submit", student_tasks["Task Name"].tolist())
+
+        # Submission Options
+        st.markdown("### 📤 Submit Your Work")
+
+        submission_type = st.radio(
+            "Choose Submission Type:",
+            ["Text", "Upload File", "Video Recording", "Audio Recording"]
+        )
+
+        submission_data = None
+        file_name = None
+        file_type = None
+        start_time = datetime.now()  # Start timing the task
+
+        if submission_type == "Text":
+            submission_data = st.text_area("Enter your response:")
+            file_type = "text"
+            file_name = f"{student_name}_{selected_task}_response.txt"
+
+        elif submission_type == "Upload File":
             uploaded_file = st.file_uploader("Upload Your Work", type=["png", "jpg", "pdf", "mp4", "mov", "txt", "docx"])
+            if uploaded_file:
+                submission_data = uploaded_file.getvalue()
+                file_name = uploaded_file.name
+                file_type = uploaded_file.type
 
-            if st.button("Submit Task"):
-                submission_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                new_submission = pd.DataFrame({
-                    "Student": [student_name],
-                    "Task Name": [selected_task],
-                    "File Type": [uploaded_file.type if uploaded_file else ""],
-                    "File Name": [uploaded_file.name if uploaded_file else ""],
-                    "Submission Time": [submission_time],
-                    "Start Time": [""],  # Placeholder, to be updated later
-                    "Day": [student_tasks[student_tasks["Task Name"] == selected_task]["Day"].values[0]],
-                    "Time Block": [student_tasks[student_tasks["Task Name"] == selected_task]["Time Block"].values[0]]
-                })
-                submission_df = pd.concat([pd.read_csv(SUBMISSIONS_CSV), new_submission], ignore_index=True)
-                submission_df.to_csv(SUBMISSIONS_CSV, index=False)
-                st.success("✅ Task submitted successfully!")
+        elif submission_type == "Video Recording":
+            st.warning("📹 Video recording feature is under development. Please upload a video file for now.")
+
+        elif submission_type == "Audio Recording":
+            st.warning("🎤 Audio recording feature is under development. Please upload an audio file for now.")
+
+        # Save Submission
+        if st.button("Submit Task"):
+            end_time = datetime.now()  # End timing the task
+            umeme_points = calculate_umeme(start_time, end_time)
+
+            # AI-Generated Feedback for Text Submissions
+            feedback = ai_feedback(submission_data) if submission_type == "Text" else "CSE will review."
+
+            submission_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            new_submission = pd.DataFrame({
+                "Student": [student_name],
+                "Task Name": [selected_task],
+                "File Type": [file_type if file_type else "N/A"],
+                "File Name": [file_name if file_name else "N/A"],
+                "Submission Time": [submission_time],
+                "Start Time": [start_time.strftime("%Y-%m-%d %H:%M:%S")],
+                "Day": [student_tasks[student_tasks["Task Name"] == selected_task]["Day"].values[0]],
+                "Time Block": [student_tasks[student_tasks["Task Name"] == selected_task]["Time Block"].values[0]],
+                "Feedback": [feedback]
+            })
+
+            submission_df = pd.concat([pd.read_csv(SUBMISSIONS_CSV), new_submission], ignore_index=True)
+            submission_df.to_csv(SUBMISSIONS_CSV, index=False)
+
+            # Save Umeme Points
+            df_scores = pd.read_csv(SCORES_CSV)
+            new_score = pd.DataFrame({
+                "Student": [student_name],
+                "XP": [0],  # XP to be assigned by CSE
+                "Rating": ["Pending"],
+                "Umeme": [umeme_points]
+            })
+            df_scores = pd.concat([df_scores, new_score], ignore_index=True)
+            df_scores.to_csv(SCORES_CSV, index=False)
+
+            st.success(f"✅ Task submitted successfully! You earned {umeme_points} Umeme Points! ⚡")
+            st.markdown(f"📝 **AI Feedback:** {feedback}")
+
+# --------------------------
+# 🔐 ADMIN DASHBOARD (View & Manage Data)
+# --------------------------
+elif menu_option == "🔐 Admin Dashboard":
+    st.markdown("### 🔐 Admin Dashboard")
+    df_classes = pd.read_csv(CLASSES_CSV)
+    st.dataframe(df_classes)
