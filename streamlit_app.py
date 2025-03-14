@@ -75,7 +75,7 @@ unit_schedule = pd.DataFrame({
 assert len(unit_schedule["Day"]) == len(unit_schedule["Time Block"]) == len(unit_schedule["Task"]), "Mismatch in column lengths!"
 
 # CSE View or Student View
-role = st.radio("Select Your Role:", ["CSE (Coach)", "Siri Solver (Student)"])
+role = st.radio("Select Your Role:", ["CSE (Coach)", "Siri Solver (Student)", "Admin"])
 
 if role == "CSE (Coach)":
     st.markdown("### 🏫 Class Management")
@@ -102,8 +102,23 @@ if role == "CSE (Coach)":
     xp_awarded = calculate_xp(rating)
     
     if st.button("Save Rating"):
-        save_to_mongodb(collection_xp, {"Student": selected_student, "XP": xp_awarded, "Rating": rating})
+        save_to_mongodb(collection_scores, {"Student": selected_student, "XP": xp_awarded, "Rating": rating})
         st.success(f"✅ Rating Saved! {selected_student} earned {xp_awarded} XP!")
+
+elif role == "Admin":
+    st.markdown("### 🔐 Admin Dashboard")
+    admin_password = st.text_input("Enter Admin Password", type="password")
+    
+    if admin_password == "siriadmin123":
+        st.success("✅ Admin Access Granted!")
+        all_scores = list(collection_scores.find())
+        if all_scores:
+            df_scores = pd.DataFrame(all_scores)
+            st.dataframe(df_scores)
+            df_scores.to_csv("uwazi_scores.csv", index=False)
+            st.download_button("Download CSV", "uwazi_scores.csv", "text/csv")
+        else:
+            st.warning("🚨 No student scores available!")
 
 elif role == "Siri Solver (Student)":
     st.markdown("### 📝 Join Class & Start Task")
@@ -122,18 +137,3 @@ elif role == "Siri Solver (Student)":
             umeme_points = calculate_umeme(st.session_state["start_time"], end_time)
             save_to_mongodb(collection_files, {"Student": student_name, "Task": task, "Umeme Points": umeme_points})
             st.success(f"✅ Task Submitted! You earned {umeme_points} Umeme Points!")
-
-# --- Admin Dashboard ---
-st.markdown("### 🔐 Admin Dashboard")
-admin_password = st.text_input("Enter Admin Password", type="password")
-
-if admin_password == "siriadmin123":
-    st.success("✅ Admin Access Granted!")
-    all_scores = list(collection_scores.find())
-    if all_scores:
-        df_scores = pd.DataFrame(all_scores)
-        st.dataframe(df_scores)
-        df_scores.to_csv("uwazi_scores.csv", index=False)
-        st.download_button("Download CSV", "uwazi_scores.csv", "text/csv")
-    else:
-        st.warning("🚨 No student scores available!")
