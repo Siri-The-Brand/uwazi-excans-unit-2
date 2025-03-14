@@ -44,31 +44,31 @@ st.set_page_config(page_title="Uwazi Unit 2", page_icon="🎭", layout="wide")
 st.title("🌟 Uwazi Unit 2: Theatrical Innovations")
 st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 
-# Define Unit Schedule
+# Define Unit Schedule with Resources
 unit_schedule = {
     "Day 1": [
-        ("Soma Time", "Logical Problem-Solving"),
-        ("Siri Time", "Creative Motion Expression"),
-        ("Solver Time", "Team Challenge"),
-        ("Soma Time", "Numerical Analysis"),
-        ("Siri Time", "Balance & Coordination"),
-        ("Solver Time", "Puzzle Deduction")
+        ("Soma Time", "Logical Problem-Solving", "Building blocks, puzzles, problem-solving worksheets"),
+        ("Siri Time", "Creative Motion Expression", "Music, scarves, props for expression exercises"),
+        ("Solver Time", "Team Challenge", "Cooperative challenge materials (ropes, small objects for team tasks)"),
+        ("Soma Time", "Numerical Analysis", "Graph paper, calculators, data analysis charts"),
+        ("Siri Time", "Balance & Coordination", "Balance beams, agility ladders, small cones"),
+        ("Solver Time", "Puzzle Deduction", "Jigsaw puzzles, logic problem cards")
     ],
     "Day 2": [
-        ("Soma Time", "Inductive Reasoning"),
-        ("Siri Time", "Acrobatic Challenge"),
-        ("Solver Time", "Physical Coordination"),
-        ("Soma Time", "Pattern Recognition"),
-        ("Siri Time", "Statistical Analysis"),
-        ("Solver Time", "Critical Thinking")
+        ("Soma Time", "Inductive Reasoning", "Pattern blocks, prediction exercises"),
+        ("Siri Time", "Acrobatic Challenge", "Exercise mats, safety pads"),
+        ("Solver Time", "Physical Coordination", "Jump ropes, reaction speed tools"),
+        ("Soma Time", "Pattern Recognition", "Color sorting games, sequencing cards"),
+        ("Siri Time", "Statistical Analysis", "Bar charts, statistical datasets"),
+        ("Solver Time", "Critical Thinking", "Case study problems, debate prompts")
     ],
     "Day 3": [
-        ("Soma Time", "Mathematical Operations"),
-        ("Siri Time", "Dexterity Challenge"),
-        ("Solver Time", "Strategic Thinking"),
-        ("Soma Time", "Abstract Reasoning"),
-        ("Siri Time", "Reflex & Speed Test"),
-        ("Solver Time", "Real-World Simulation")
+        ("Soma Time", "Mathematical Operations", "Math manipulatives, counters"),
+        ("Siri Time", "Dexterity Challenge", "Fine motor skill activities (clay, threading beads)"),
+        ("Solver Time", "Strategic Thinking", "Board games, scenario-based challenges"),
+        ("Soma Time", "Abstract Reasoning", "Optical illusions, abstract art exploration"),
+        ("Siri Time", "Reflex & Speed Test", "Stopwatches, fast-paced movement drills"),
+        ("Solver Time", "Real-World Simulation", "VR headset or interactive AR experience for simulations")
     ]
 }
 
