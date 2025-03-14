@@ -1,0 +1,39 @@
+import pandas as pd
+
+# Define full schedule including Day 4 (Field Trip)
+schedule_data = [
+    ["Day 1", "LM Soma Time", "Logical Problem-Solving", "Building blocks, puzzles, problem-solving worksheets"],
+    ["Day 1", "KIN Siri Time", "Creative Motion Expression", "Music, scarves, props for expression exercises"],
+    ["Day 1", "KIN Solver Time", "Team Challenge", "Cooperative challenge materials (ropes, small objects for team tasks)"],
+    ["Day 1", "LM Soma Time", "Numerical Analysis", "Graph paper, calculators, data analysis charts"],
+    ["Day 1", "KIN Siri Time", "Balance & Coordination", "Balance beams, agility ladders, small cones"],
+    ["Day 1", "LM Solver Time", "Puzzle Deduction", "Jigsaw puzzles, logic problem cards"],
+    
+    ["Day 2", "LM Soma Time", "Inductive Reasoning", "Pattern blocks, prediction exercises"],
+    ["Day 2", "KIN Siri Time", "Acrobatic Challenge", "Exercise mats, safety pads"],
+    ["Day 2", "KIN Solver Time", "Physical Coordination", "Jump ropes, reaction speed tools"],
+    ["Day 2", "LM Soma Time", "Pattern Recognition", "Color sorting games, sequencing cards"],
+    ["Day 2", "LM Siri Time", "Statistical Analysis", "Bar charts, statistical datasets"],
+    ["Day 2", "LM Solver Time", "Critical Thinking", "Case study problems, debate prompts"],
+    
+    ["Day 3", "LM Soma Time", "Mathematical Operations", "Math manipulatives, counters"],
+    ["Day 3", "KIN Siri Time", "Dexterity Challenge", "Fine motor skill activities (clay, threading beads)"],
+    ["Day 3", "LM Solver Time", "Strategic Thinking", "Board games, scenario-based challenges"],
+    ["Day 3", "LM Soma Time", "Abstract Reasoning", "Optical illusions, abstract art exploration"],
+    ["Day 3", "KIN Siri Time", "Reflex & Speed Test", "Stopwatches, fast-paced movement drills"],
+    ["Day 3", "Solver Time", "Real-World Simulation", "VR headset or interactive AR experience for simulations"],
+
+    ["Day 4", "Soma & Siri Time", "Field Trip to Observe Real-World Practitioners", "Visit a Science Lab, Math Museum, or Acrobatics Training Center"],
+    ["Day 4", "Solver Time", "Hands-on Industry Engagement", "Interview professionals using Kinesthetic and Logical-Mathematical Intelligence"],
+    ["Day 4", "Siri Time", "Reflection & Discussion", "Journaling and group discussion on field trip learnings"],
+]
+
+# Convert to DataFrame
+schedule_df = pd.DataFrame(schedule_data, columns=["Day", "Time Block", "Task", "Resources"])
+
+# Save to CSV
+csv_filename = "/mnt/data/unit_schedule.csv"
+schedule_df.to_csv(csv_filename, index=False)
+
+# Display CSV path for download
+csv_filename
