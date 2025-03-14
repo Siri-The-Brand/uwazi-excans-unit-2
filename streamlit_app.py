@@ -44,7 +44,7 @@ st.set_page_config(page_title="Uwazi Unit 2", page_icon="🎭", layout="wide")
 st.title("🌟 Uwazi Unit 2: Theatrical Innovations")
 st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 
- Define Unit Schedule with Resources
+# Define Unit Schedule with Resources
 unit_schedule = {
     "Day 1": [
         ["Soma Time", "Logical Problem-Solving", "Building blocks, puzzles, problem-solving worksheets"],
