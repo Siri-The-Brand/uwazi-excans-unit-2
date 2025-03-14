@@ -44,7 +44,7 @@ st.set_page_config(page_title="Uwazi Unit 2", page_icon="🎭", layout="wide")
 st.title("🌟 Uwazi Unit 2: Theatrical Innovations")
 st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 
-# Define Unit Schedule with Resources
+ Define Unit Schedule with Resources
 unit_schedule = {
     "Day 1": [
         ["Soma Time", "Logical Problem-Solving", "Building blocks, puzzles, problem-solving worksheets"],
@@ -72,7 +72,6 @@ unit_schedule = {
     ]
 }
 
-
 # Sidebar Navigation
 menu_option = st.sidebar.radio("Navigation", ["🏫 Class Management", "📅 View Unit 2 Schedule", "🎓 Student Dashboard", "📊 CSE Dashboard", "🔐 Admin Dashboard"])
 
@@ -81,7 +80,7 @@ if menu_option == "📅 View Unit 2 Schedule":
     selected_day = st.selectbox("Choose a Day", list(unit_schedule.keys()))
     st.markdown(f"## {selected_day}")
     day_schedule = unit_schedule[selected_day]
-    schedule_df = pd.DataFrame(day_schedule, columns=["Time Block", "Task"])
+    schedule_df = pd.DataFrame(day_schedule, columns=["Time Block", "Task", "Resources Needed"])
     st.dataframe(schedule_df)
     if st.button(f"Start {selected_day}"):
         st.success(f"✅ You have started {selected_day}!")
