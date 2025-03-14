@@ -9,6 +9,7 @@ from datetime import datetime
 STUDENT_CSV = "students.csv"
 TASKS_CSV = "tasks.csv"
 SCORES_CSV = "scores.csv"
+SUBMISSIONS_CSV = "submissions.csv"
 
 # Initialize CSV Files if they do not exist
 def initialize_csv(file_path, columns):
@@ -19,6 +20,7 @@ def initialize_csv(file_path, columns):
 initialize_csv(STUDENT_CSV, ["Student Name", "Class Code"])
 initialize_csv(TASKS_CSV, ["Student", "Task", "Day", "Time Block"])
 initialize_csv(SCORES_CSV, ["Student", "XP", "Rating"])
+initialize_csv(SUBMISSIONS_CSV, ["Student", "Task", "File Type", "File Name", "Submission Time"])
 
 # Generate Unique Codes
 def generate_code():
@@ -42,45 +44,60 @@ st.set_page_config(page_title="Uwazi Unit 2", page_icon="🎭", layout="wide")
 st.title("🌟 Uwazi Unit 2: Theatrical Innovations")
 st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 
-# Define Unit Schedule with 18 tasks properly structured
-unit_schedule = pd.DataFrame({
-    "Day": ["Day 1"] * 6 + ["Day 2"] * 6 + ["Day 3"] * 6,
-    "Time Block": ["Soma Time", "Siri Time", "Solver Time"] * 6,
-    "Task": [
-        "Logical Problem-Solving", "Creative Motion Expression", "Team Challenge",
-        "Numerical Analysis", "Balance & Coordination", "Puzzle Deduction",
-        "Inductive Reasoning", "Acrobatic Challenge", "Physical Coordination",
-        "Pattern Recognition", "Statistical Analysis", "Critical Thinking",
-        "Mathematical Operations", "Dexterity Challenge", "Strategic Thinking",
-        "Abstract Reasoning", "Reflex & Speed Test", "Real-World Simulation"
+# Define Unit Schedule
+unit_schedule = {
+    "Day 1": [
+        ("Soma Time", "Logical Problem-Solving"),
+        ("Siri Time", "Creative Motion Expression"),
+        ("Solver Time", "Team Challenge"),
+        ("Soma Time", "Numerical Analysis"),
+        ("Siri Time", "Balance & Coordination"),
+        ("Solver Time", "Puzzle Deduction")
+    ],
+    "Day 2": [
+        ("Soma Time", "Inductive Reasoning"),
+        ("Siri Time", "Acrobatic Challenge"),
+        ("Solver Time", "Physical Coordination"),
+        ("Soma Time", "Pattern Recognition"),
+        ("Siri Time", "Statistical Analysis"),
+        ("Solver Time", "Critical Thinking")
+    ],
+    "Day 3": [
+        ("Soma Time", "Mathematical Operations"),
+        ("Siri Time", "Dexterity Challenge"),
+        ("Solver Time", "Strategic Thinking"),
+        ("Soma Time", "Abstract Reasoning"),
+        ("Siri Time", "Reflex & Speed Test"),
+        ("Solver Time", "Real-World Simulation")
     ]
-})
+}
 
-# Ensure all columns have the same length
-assert len(unit_schedule["Day"]) == len(unit_schedule["Time Block"]) == len(unit_schedule["Task"]), "Mismatch in column lengths!"
+# Sidebar Navigation
+menu_option = st.sidebar.radio("Navigation", ["🏫 Class Management", "📅 View Unit 2 Schedule", "🎓 Student Dashboard", "📊 CSE Dashboard", "🔐 Admin Dashboard"])
 
-# CSE View or Student View
-role = st.radio("Select Your Role:", ["CSE (Coach)", "Siri Solver (Student)", "Admin"])
+if menu_option == "📅 View Unit 2 Schedule":
+    st.markdown("### 📅 Unit 2 Full Schedule")
+    selected_day = st.selectbox("Choose a Day", list(unit_schedule.keys()))
+    st.markdown(f"## {selected_day}")
+    day_schedule = unit_schedule[selected_day]
+    schedule_df = pd.DataFrame(day_schedule, columns=["Time Block", "Task"])
+    st.dataframe(schedule_df)
+    if st.button(f"Start {selected_day}"):
+        st.success(f"✅ You have started {selected_day}!")
 
-if role == "CSE (Coach)":
-    st.markdown("### 🏫 Class Management")
+elif menu_option == "🏫 Class Management":
+    st.markdown("### 🏫 Manage Your Class")
     cse_name = st.text_input("Enter Your Name (CSE)")
-    day_selected = st.selectbox("Select Day", unit_schedule["Day"].unique())
-    time_block_selected = st.selectbox("Select Time Block", unit_schedule["Time Block"].unique())
-    task_selected = st.selectbox("Select Task", unit_schedule["Task"].unique())
+    class_code = st.text_input("Enter Class Code to Create")
     
+    if st.button("Create Class"):
+        st.success(f"✅ Class {class_code} Created! Students can now join using this code.")
+
+elif menu_option == "📊 CSE Dashboard":
+    st.markdown("### 📊 Evaluate Student Performance")
     student_df = pd.read_csv(STUDENT_CSV)
     student_names = student_df["Student Name"].tolist() if not student_df.empty else []
     selected_student = st.selectbox("Select Student", student_names)
-    
-    if st.button("Assign Task"):
-        df = pd.read_csv(TASKS_CSV)
-        new_entry = pd.DataFrame({"Student": [selected_student], "Task": [task_selected], "Day": [day_selected], "Time Block": [time_block_selected]})
-        df = pd.concat([df, new_entry], ignore_index=True)
-        df.to_csv(TASKS_CSV, index=False)
-        st.success(f"✅ Task '{task_selected}' assigned to {selected_student}!")
-    
-    st.markdown("### 📊 Evaluate Student Performance")
     rating = st.selectbox("Select Rating", ["Excellent", "Great", "Good", "Needs Improvement"])
     xp_awarded = calculate_xp(rating)
     
@@ -90,8 +107,12 @@ if role == "CSE (Coach)":
         df = pd.concat([df, new_entry], ignore_index=True)
         df.to_csv(SCORES_CSV, index=False)
         st.success(f"✅ Rating Saved! {selected_student} earned {xp_awarded} XP!")
+    
+    st.markdown("### 📸 🎥 View Student Submissions")
+    submissions_df = pd.read_csv(SUBMISSIONS_CSV)
+    st.dataframe(submissions_df)
 
-elif role == "Admin":
+elif menu_option == "🔐 Admin Dashboard":
     st.markdown("### 🔐 Admin Dashboard")
     admin_password = st.text_input("Enter Admin Password", type="password")
     
@@ -101,7 +122,7 @@ elif role == "Admin":
         st.dataframe(df_scores)
         st.download_button("Download CSV", df_scores.to_csv(index=False), "scores.csv", "text/csv")
 
-elif role == "Siri Solver (Student)":
+elif menu_option == "🎓 Student Dashboard":
     st.markdown("### 📝 Join Class & Start Task")
     student_name = st.text_input("Enter Your Name (Siri Solver)")
     class_code = st.text_input("Enter Class Code")
@@ -112,21 +133,3 @@ elif role == "Siri Solver (Student)":
         df = pd.concat([df, new_entry], ignore_index=True)
         df.to_csv(STUDENT_CSV, index=False)
         st.success(f"✅ {student_name} joined class {class_code}!")
-    
-    task_df = pd.read_csv(TASKS_CSV)
-    assigned_tasks = task_df[task_df["Student"] == student_name]
-    
-    if not assigned_tasks.empty:
-        st.markdown("### Your Assigned Tasks")
-        st.dataframe(assigned_tasks)
-        if st.button("Start Task"):
-            start_time = datetime.now()
-            st.session_state["start_time"] = start_time
-            st.success("✅ Task Started! Complete it and upload proof.")
-    
-    if "start_time" in st.session_state:
-        end_time = datetime.now()
-        photo = st.file_uploader("Upload Proof of Completion")
-        if st.button("Submit Task") and photo:
-            umeme_points = calculate_umeme(st.session_state["start_time"], end_time)
-            st.success(f"✅ Task Submitted! You earned {umeme_points} Umeme Points!")
