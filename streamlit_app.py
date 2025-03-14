@@ -47,28 +47,33 @@ st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 # Define Unit Schedule with Resources
 unit_schedule = {
     "Day 1": [
-        ["Soma Time", "Logical Problem-Solving", "Building blocks, puzzles, problem-solving worksheets"],
-        ["Siri Time", "Creative Motion Expression", "Music, scarves, props for expression exercises"],
-        ["Solver Time", "Team Challenge", "Cooperative challenge materials (ropes, small objects for team tasks)"],
-        ["Soma Time", "Numerical Analysis", "Graph paper, calculators, data analysis charts"],
-        ["Siri Time", "Balance & Coordination", "Balance beams, agility ladders, small cones"],
-        ["Solver Time", "Puzzle Deduction", "Jigsaw puzzles, logic problem cards"]
+        ["LM Soma Time", "Logical Problem-Solving", "Building blocks, puzzles, problem-solving worksheets"],
+        ["KIN Siri Time", "Creative Motion Expression", "Music, scarves, props for expression exercises"],
+        ["KIN Solver Time", "Team Challenge", "Cooperative challenge materials (ropes, small objects for team tasks)"],
+        ["LM Soma Time", "Numerical Analysis", "Graph paper, calculators, data analysis charts"],
+        ["KIN Siri Time", "Balance & Coordination", "Balance beams, agility ladders, small cones"],
+        ["LM Solver Time", "Puzzle Deduction", "Jigsaw puzzles, logic problem cards"]
     ],
     "Day 2": [
-        ["Soma Time", "Inductive Reasoning", "Pattern blocks, prediction exercises"],
-        ["Siri Time", "Acrobatic Challenge", "Exercise mats, safety pads"],
-        ["Solver Time", "Physical Coordination", "Jump ropes, reaction speed tools"],
-        ["Soma Time", "Pattern Recognition", "Color sorting games, sequencing cards"],
-        ["Siri Time", "Statistical Analysis", "Bar charts, statistical datasets"],
-        ["Solver Time", "Critical Thinking", "Case study problems, debate prompts"]
+        ["LM Soma Time", "Inductive Reasoning", "Pattern blocks, prediction exercises"],
+        ["KIN Siri Time", "Acrobatic Challenge", "Exercise mats, safety pads"],
+        ["KIN Solver Time", "Physical Coordination", "Jump ropes, reaction speed tools"],
+        ["LM Soma Time", "Pattern Recognition", "Color sorting games, sequencing cards"],
+        ["LM Siri Time", "Statistical Analysis", "Bar charts, statistical datasets"],
+        ["LM Solver Time", "Critical Thinking", "Case study problems, debate prompts"]
     ],
     "Day 3": [
-        ["Soma Time", "Mathematical Operations", "Math manipulatives, counters"],
-        ["Siri Time", "Dexterity Challenge", "Fine motor skill activities (clay, threading beads)"],
-        ["Solver Time", "Strategic Thinking", "Board games, scenario-based challenges"],
-        ["Soma Time", "Abstract Reasoning", "Optical illusions, abstract art exploration"],
-        ["Siri Time", "Reflex & Speed Test", "Stopwatches, fast-paced movement drills"],
+        ["LM Soma Time", "Mathematical Operations", "Math manipulatives, counters"],
+        ["KIN Siri Time", "Dexterity Challenge", "Fine motor skill activities (clay, threading beads)"],
+        ["LM Solver Time", "Strategic Thinking", "Board games, scenario-based challenges"],
+        ["LM Soma Time", "Abstract Reasoning", "Optical illusions, abstract art exploration"],
+        ["KIN Siri Time", "Reflex & Speed Test", "Stopwatches, fast-paced movement drills"],
         ["Solver Time", "Real-World Simulation", "VR headset or interactive AR experience for simulations"]
+    ],
+    "Day 4 - Field Trip": [
+        ["Soma & Siri Time", "Field Trip to Observe Real-World Practitioners", "Visit a Science Lab, Math Museum, or Acrobatics Training Center"],
+        ["Solver Time", "Hands-on Industry Engagement", "Interview professionals using Kinesthetic and Logical-Mathematical Intelligence"],
+        ["Siri Time", "Reflection & Discussion", "Journaling and group discussion on field trip learnings"]
     ]
 }
 
