@@ -1,9 +1,9 @@
 import streamlit as st
-import random
 import pandas as pd
+import time
 import os
 import uuid
-import time
+from datetime import datetime
 from pymongo import MongoClient
 
 # Secure MongoDB Connection
@@ -16,14 +16,14 @@ collection_classes = db["sl_uwazi_classes"]
 collection_students = db["sl_uwazi_students"]
 collection_tasks = db["sl_uwazi_tasks"]
 collection_scores = db["sl_uwazi_scores"]
+collection_xp = db["sl_uwazi_xp"]
 collection_files = db["sl_uwazi_files"]
-collection_xp = db["sl_uwazi_xp"]  # ✅ XP & Umeme Points Collection
 
 # Generate Unique Codes
 def generate_code():
     return str(uuid.uuid4())[:6]
 
-# Save to MongoDB with Error Handling
+# Save to MongoDB
 def save_to_mongodb(collection, data):
     try:
         collection.insert_one(data)
@@ -31,134 +31,95 @@ def save_to_mongodb(collection, data):
     except Exception as e:
         st.error(f"⚠️ Error Saving Data: {e}")
 
-# AI Feedback System
-def generate_ai_feedback(score):
-    if score >= 9:
-        return "🔥 Excellent! You’ve mastered this skill. Keep pushing your limits!"
-    elif 7 <= score < 9:
-        return "✅ Great work! Review key concepts again."
-    elif 5 <= score < 7:
-        return "🛠️ You're making progress. Focus on improving consistency."
+# XP & Umeme Points System
+def calculate_xp(cse_rating):
+    return {"Excellent": 30, "Great": 20, "Good": 15, "Needs Improvement": 5}.get(cse_rating, 0)
+
+def calculate_umeme(start_time, end_time):
+    time_taken = (end_time - start_time).total_seconds() / 60  # Time in minutes
+    if time_taken <= 10:
+        return 15
+    elif time_taken <= 20:
+        return 10
     else:
-        return "⚡ Keep trying! Need help? Ask your CSE!"
-
-# XP & UMEME POINTS SYSTEM
-def calculate_xp(task_level):
-    return {"Easy": 10, "Moderate": 20, "Difficult": 30}.get(task_level, 0)
-
-def calculate_umeme(task_level):
-    return {"Easy": 5, "Moderate": 10, "Difficult": 15}.get(task_level, 0)
+        return 5
 
 # Streamlit App Configuration
 st.set_page_config(page_title="Uwazi Unit 2", page_icon="🎭", layout="wide")
-
 st.title("🌟 Uwazi Unit 2: Theatrical Innovations")
 st.subheader("Building Certitude Through Logic, Motion & Creative Expression")
 
-# --- CLASS MANAGEMENT ---
-st.sidebar.markdown("## 🏫 Class Management")
-cse_name = st.sidebar.text_input("Enter Your Name (CSE)")
-class_action = st.sidebar.radio("Choose Action", ["Create Class", "Join Class", "View Class"])
+# Define Unit Schedule
+unit_schedule = pd.DataFrame({
+    "Day": ["Day 1", "Day 2", "Day 3"],
+    "Time Block": ["Soma Time", "Siri Time", "Solver Time"],
+    "Task": [
+        "Logical Problem-Solving", "Creative Motion Expression", "Team Challenge",
+        "Numerical Analysis", "Balance & Coordination", "Puzzle Deduction",
+        "Inductive Reasoning", "Acrobatic Challenge", "Physical Coordination"
+    ]
+})
 
-if class_action == "Create Class":
-    class_name = st.sidebar.text_input("Class Name")
-    if st.sidebar.button("Create Class"):
-        class_code = generate_code()
-        save_to_mongodb(collection_classes, {"Class Name": class_name, "Class Code": class_code, "CSE": cse_name})
-        st.sidebar.write(f"✅ Class Created! **Code: {class_code}**")
+# CSE View or Student View
+role = st.radio("Select Your Role:", ["CSE (Coach)", "Siri Solver (Student)"])
 
-elif class_action == "Join Class":
-    student_name = st.sidebar.text_input("Student Name")
-    class_code = st.sidebar.text_input("Enter Class Code")
-    if st.sidebar.button("Join Class"):
-        student_code = generate_code()
-        save_to_mongodb(collection_students, {"Student Name": student_name, "Class Code": class_code, "Student Code": student_code})
-        st.sidebar.success(f"✅ Joined Class Successfully! **Student Code: {student_code}**")
-
-elif class_action == "View Class":
-    class_code = st.sidebar.text_input("Enter Class Code")
-    if st.sidebar.button("View Students"):
-        students = list(collection_students.find({"Class Code": class_code}))
-        if students:
-            st.sidebar.write("👨‍🎓 Students in Class:")
-            for student in students:
-                st.sidebar.write(f"- {student['Student Name']}")
-        else:
-            st.sidebar.warning("🚨 No students found for this class!")
-
-# --- TIME BLOCK SELECTION ---
-st.markdown("## ⏳ Choose Learning Block")
-time_block = st.radio("Select Time Block", ["Soma Time", "Siri Time", "Solver Time"])
-
-# --- TASKS & LOGIC ---
-task_categories = {
-    "Soma Time": {
-        "Logical Reasoning": "Solve a math puzzle using a step-by-step approach.",
-        "Problem-Solving": "Use a simulation to solve a real-world challenge.",
-        "Mathematical Operations": "Complete an AI-generated probability quiz.",
-        "Numerical Analysis": "Analyze a dataset and predict future trends."
-    },
-    "Siri Time": {
-        "Body Awareness": "Perform a guided relaxation & breathing exercise.",
-        "Balance": "Hold a yoga pose for 30 seconds & log performance.",
-        "Fine Motor Control": "Draw a pattern using an AI-generated prompt.",
-        "Gross Motor Control": "Follow a workout routine & upload a performance video."
-    },
-    "Solver Time": {
-        "Physical Expressiveness": "Act out an emotion using body language & record it.",
-        "Spatial Awareness": "Solve a blindfolded navigation puzzle with a partner.",
-        "Physical Coordination": "Perform a teamwork-based physical challenge."
-    }
-}
-
-if time_block:
-    selected_task_key = st.selectbox(f"Select {time_block} Task", list(task_categories[time_block].keys()))
-    selected_task = task_categories[time_block][selected_task_key]
-    task_level = st.selectbox("Select Difficulty", ["Easy", "Moderate", "Difficult"])
-
-    if st.button("Start Task"):
-        start_time = time.time()
-        xp_earned = calculate_xp(task_level)
-        umeme_earned = calculate_umeme(task_level)
-
-        save_to_mongodb(collection_tasks, {
-            "Student": student_name,
-            "Task": selected_task,
-            "Task Level": task_level,
-            "Time Block": time_block,
-            "Start Time": start_time,
-            "XP Earned": xp_earned,
-            "Umeme Points Earned": umeme_earned
-        })
-
-        st.success(f"🕒 Task '{selected_task}' started! (+{xp_earned} XP, +{umeme_earned} Umeme Points)")
-
-# --- REAL-TIME PROGRESS UPDATE ---
-st.markdown("### 📊 Live Progress Updates")
-
-# Define student name
-selected_student = st.selectbox("Select Student", [s["Student Name"] for s in collection_students.find()])
-
-if selected_student:
-    student_progress = list(collection_tasks.find({"Student": selected_student}))
+if role == "CSE (Coach)":
+    st.markdown("### 🏫 Class Management")
+    cse_name = st.text_input("Enter Your Name (CSE)")
+    day_selected = st.selectbox("Select Day", unit_schedule["Day"].unique())
+    time_block_selected = st.selectbox("Select Time Block", unit_schedule["Time Block"].unique())
+    task_selected = st.selectbox("Select Task", unit_schedule["Task"].unique())
     
-    if student_progress:
-        progress_df = pd.DataFrame(student_progress)
-        st.dataframe(progress_df)
-    else:
-        st.write("No progress recorded yet.")
+    students = list(collection_students.find())
+    student_names = [s["Student Name"] for s in students]
+    selected_student = st.selectbox("Select Student", student_names)
+    
+    if st.button("Assign Task"):
+        save_to_mongodb(collection_tasks, {
+            "Student": selected_student,
+            "Task": task_selected,
+            "Day": day_selected,
+            "Time Block": time_block_selected
+        })
+        st.success(f"✅ Task '{task_selected}' assigned to {selected_student}!")
+    
+    st.markdown("### 📊 Evaluate Student Performance")
+    rating = st.selectbox("Select Rating", ["Excellent", "Great", "Good", "Needs Improvement"])
+    xp_awarded = calculate_xp(rating)
+    
+    if st.button("Save Rating"):
+        save_to_mongodb(collection_xp, {"Student": selected_student, "XP": xp_awarded, "Rating": rating})
+        st.success(f"✅ Rating Saved! {selected_student} earned {xp_awarded} XP!")
 
-# --- ADMIN DASHBOARD ---
+elif role == "Siri Solver (Student)":
+    st.markdown("### 📝 Start Task")
+    student_name = st.text_input("Your Full Name")
+    task = st.selectbox("Select Your Assigned Task", unit_schedule["Task"].unique())
+    
+    if st.button("Start Task"):
+        start_time = datetime.now()
+        st.session_state["start_time"] = start_time
+        st.success("✅ Task Started! Complete it and upload proof.")
+    
+    if "start_time" in st.session_state:
+        end_time = datetime.now()
+        photo = st.file_uploader("Upload Proof of Completion")
+        if st.button("Submit Task") and photo:
+            umeme_points = calculate_umeme(st.session_state["start_time"], end_time)
+            save_to_mongodb(collection_files, {"Student": student_name, "Task": task, "Umeme Points": umeme_points})
+            st.success(f"✅ Task Submitted! You earned {umeme_points} Umeme Points!")
+
+# --- Admin Dashboard ---
 st.markdown("### 🔐 Admin Dashboard")
 admin_password = st.text_input("Enter Admin Password", type="password")
 
 if admin_password == "siriadmin123":
     st.success("✅ Admin Access Granted!")
-    results = list(collection_scores.find())
-    if results:
-        results_df = pd.DataFrame(results)
-        st.dataframe(results_df)
+    all_scores = list(collection_scores.find())
+    if all_scores:
+        df_scores = pd.DataFrame(all_scores)
+        st.dataframe(df_scores)
+        df_scores.to_csv("uwazi_scores.csv", index=False)
+        st.download_button("Download CSV", "uwazi_scores.csv", "text/csv")
     else:
         st.warning("🚨 No student scores available!")
-
-st.success("✅ Congrats! 🚀")
