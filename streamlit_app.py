@@ -71,6 +71,9 @@ unit_schedule = pd.DataFrame({
     ]
 })
 
+# Ensure all columns have the same length
+assert len(unit_schedule["Day"]) == len(unit_schedule["Time Block"]) == len(unit_schedule["Task"]), "Mismatch in column lengths!"
+
 # CSE View or Student View
 role = st.radio("Select Your Role:", ["CSE (Coach)", "Siri Solver (Student)"])
 
