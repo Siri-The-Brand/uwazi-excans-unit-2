@@ -13,6 +13,7 @@ TASKS_ASSIGNED_CSV = "tasks_assigned.csv"
 TASKS_LIST_CSV = "tasks_list.csv"
 SCORES_CSV = "scores.csv"
 SUBMISSIONS_CSV = "submissions.csv"
+SESSIONS_CSV = "sessions.csv"
 
 # --------------------------
 # INITIALIZE CSV FILES
@@ -29,6 +30,8 @@ initialize_csv(STUDENT_CSV, ["Student Name", "Class Code"])
 initialize_csv(TASKS_ASSIGNED_CSV, ["Student", "Task Name", "Day", "Time Block", "CSE"])
 initialize_csv(SCORES_CSV, ["Student", "XP", "Rating", "Umeme"])
 initialize_csv(SUBMISSIONS_CSV, ["Student", "Task Name", "File Type", "File Name", "Submission Time", "Start Time", "Day", "Time Block"])
+initialize_csv(SESSIONS_CSV, ["Class Code", "Session Status"])
+
 
 # Predefined list of tasks for assignment
 if not os.path.exists(TASKS_LIST_CSV):
@@ -50,7 +53,13 @@ if not os.path.exists(TASKS_LIST_CSV):
 def generate_code():
     """Generates a short unique code."""
     return str(uuid.uuid4())[:6]
-
+    
+def check_session_status(class_code):
+    """Check if a class has an active session."""
+    df_sessions = pd.read_csv(SESSIONS_CSV)
+    session = df_sessions[df_sessions["Class Code"] == class_code]
+    return not session.empty and session["Session Status"].iloc[0] == "Active"
+    
 def calculate_xp(cse_rating):
     """Maps CSE rating to XP."""
     return {"Excellent": 30, "Great": 20, "Good": 15, "Needs Improvement": 5}.get(cse_rating, 0)
@@ -122,9 +131,27 @@ elif menu_option == "📊 CSE Dashboard":
     df_classes = pd.read_csv(CLASSES_CSV)
     if df_classes.empty:
         st.warning("No classes created yet. Create one in 'Class Management'.")
+    if not cse_classes:
+            st.warning("You have not created any classes yet.")
     else:
         cse_classes = df_classes["Class Code"].tolist()
         selected_class = st.selectbox("Select Your Class", cse_classes)
+        
+        # Session Management
+        session_active = check_session_status(selected_class)
+        if session_active:
+            st.success("✅ Session is ACTIVE for this class.")
+         else:
+              if st.button("Start Session"):
+                  df_sessions = pd.read_csv(SESSIONS_CSV)
+                  new_session = pd.DataFrame({"Class Code": [selected_class], "Session Status": ["Active"]})
+                  df_sessions = pd.concat([df_sessions, new_session], ignore_index=True)
+                  df_sessions.to_csv(SESSIONS_CSV, index=False)
+                  st.success(f"✅ Session started for class {selected_class}")
+
+        # Assign Tasks
+        student_df = pd.read_csv(STUDENT_CSV)
+        students_in_class = student_df[student_df["Class Code"] == selected_class]["Student Name"].tolist()
 
         # Get students in this class
         student_df = pd.read_csv(STUDENT_CSV)
@@ -206,6 +233,19 @@ elif menu_option == "🎓 Student Dashboard":
     # --------------------------
     # VIEW & SUBMIT ASSIGNED TASKS
     # --------------------------
+    if check_session_status(class_code):
+        assigned_df = pd.read_csv(TASKS_ASSIGNED_CSV)
+        student_tasks = assigned_df[assigned_df["Student"] == student_name]
+
+        if not student_tasks.empty:
+            st.markdown("### 📌 My Assigned Tasks")
+            st.dataframe(student_tasks)
+        else:
+            st.warning("No tasks have been assigned yet.")
+    else:
+        st.warning("🚫 Session has not started for this class. Wait for the CSE to start the session.")
+
+
     assigned_df = pd.read_csv(TASKS_ASSIGNED_CSV)
     student_tasks = assigned_df[assigned_df["Student"] == student_name]
 
