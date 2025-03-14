@@ -92,8 +92,8 @@ if role == "CSE (Coach)":
         st.success(f"✅ Rating Saved! {selected_student} earned {xp_awarded} XP!")
 
 elif role == "Siri Solver (Student)":
-    st.markdown("### 📝 Start Task")
-    student_name = st.text_input("Your Full Name")
+    st.markdown("### 📝 Join Class & Start Task")
+    student_name = st.text_input("Enter Your Name (Siri Solver)")
     task = st.selectbox("Select Your Assigned Task", unit_schedule["Task"].unique())
     
     if st.button("Start Task"):
