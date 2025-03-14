@@ -32,7 +32,6 @@ initialize_csv(SCORES_CSV, ["Student", "XP", "Rating", "Umeme"])
 initialize_csv(SUBMISSIONS_CSV, ["Student", "Task Name", "File Type", "File Name", "Submission Time", "Start Time", "Day", "Time Block"])
 initialize_csv(SESSIONS_CSV, ["Class Code", "Session Status"])
 
-
 # Predefined list of tasks for assignment
 if not os.path.exists(TASKS_LIST_CSV):
     tasks_data = [
@@ -131,8 +130,6 @@ elif menu_option == "📊 CSE Dashboard":
     df_classes = pd.read_csv(CLASSES_CSV)
     if df_classes.empty:
         st.warning("No classes created yet. Create one in 'Class Management'.")
-    if not cse_classes:
-            st.warning("You have not created any classes yet.")
     else:
         cse_classes = df_classes["Class Code"].tolist()
         selected_class = st.selectbox("Select Your Class", cse_classes)
@@ -141,19 +138,15 @@ elif menu_option == "📊 CSE Dashboard":
         session_active = check_session_status(selected_class)
         if session_active:
             st.success("✅ Session is ACTIVE for this class.")
-         else:
-              if st.button("Start Session"):
-                  df_sessions = pd.read_csv(SESSIONS_CSV)
-                  new_session = pd.DataFrame({"Class Code": [selected_class], "Session Status": ["Active"]})
-                  df_sessions = pd.concat([df_sessions, new_session], ignore_index=True)
-                  df_sessions.to_csv(SESSIONS_CSV, index=False)
-                  st.success(f"✅ Session started for class {selected_class}")
+        else:
+            if st.button("Start Session"):
+                df_sessions = pd.read_csv(SESSIONS_CSV)
+                new_session = pd.DataFrame({"Class Code": [selected_class], "Session Status": ["Active"]})
+                df_sessions = pd.concat([df_sessions, new_session], ignore_index=True)
+                df_sessions.to_csv(SESSIONS_CSV, index=False)
+                st.success(f"✅ Session started for class {selected_class}")
 
         # Assign Tasks
-        student_df = pd.read_csv(STUDENT_CSV)
-        students_in_class = student_df[student_df["Class Code"] == selected_class]["Student Name"].tolist()
-
-        # Get students in this class
         student_df = pd.read_csv(STUDENT_CSV)
         students_in_class = student_df[student_df["Class Code"] == selected_class]["Student Name"].tolist()
 
@@ -182,7 +175,8 @@ elif menu_option == "📊 CSE Dashboard":
                 assigned_tasks = pd.concat([assigned_tasks, new_task], ignore_index=True)
                 assigned_tasks.to_csv(TASKS_ASSIGNED_CSV, index=False)
                 st.success(f"✅ Assigned '{selected_task}' to {selected_student}!")
-                # View submissions
+
+            # View submissions
             st.markdown("### 📌 Review Student Work")
             df_submissions = pd.read_csv(SUBMISSIONS_CSV)
 
@@ -212,7 +206,6 @@ elif menu_option == "📊 CSE Dashboard":
                     df_scores = pd.concat([df_scores, new_entry], ignore_index=True)
                     df_scores.to_csv(SCORES_CSV, index=False)
                     st.success(f"✅ Rating Saved! {selected_student_review} earned {xp_awarded} XP!")
-
 
 # --------------------------
 # 🎓 STUDENT DASHBOARD: JOIN CLASS, VIEW TASKS, SUBMIT WORK
@@ -244,7 +237,6 @@ elif menu_option == "🎓 Student Dashboard":
             st.warning("No tasks have been assigned yet.")
     else:
         st.warning("🚫 Session has not started for this class. Wait for the CSE to start the session.")
-
 
     assigned_df = pd.read_csv(TASKS_ASSIGNED_CSV)
     student_tasks = assigned_df[assigned_df["Student"] == student_name]
