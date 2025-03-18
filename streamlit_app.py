@@ -74,8 +74,14 @@ def check_session_status(class_code):
     return not session.empty and session["Session Status"].iloc[0] == "Active"
     
 def calculate_xp(cse_rating):
-    """Maps CSE rating to XP."""
-    return {"Excellent": 30, "Great": 20, "Good": 15, "Needs Improvement": 5}.get(cse_rating, 0)
+    return {
+        "🪨 Struggles - Needs significant support": 5,
+        "🌿 Beginning - Identifies some elements with help but no solution": 10,
+        "🍁 Progressing - Understands key steps but needs guidance for final answer": 15,
+        "🌳 Independent - Solves the problem with logical reasoning": 25,
+        "🌻 Mastery - Solves quickly, explains reasoning, and applies learning": 30
+    }.get(uwazi_rating, 0)
+
 
 def calculate_umeme(start_time, end_time):
     """
@@ -231,6 +237,19 @@ elif menu_option == "📊 CSE Dashboard":
                 # Assign a rating
                 rating = st.selectbox("Rate the Submission", ["Excellent", "Great", "Good", "Needs Improvement"])
                 xp_awarded = calculate_xp(rating)
+
+
+                                 # Uwazi Rubric-Based Rating with detailed descriptions
+                uwazi_rubric = {
+                "🪨 Struggles - Needs significant support": 5,
+                "🌿 Beginning - Identifies some elements with help but no solution": 10,
+                "🍁 Progressing - Understands key steps but needs guidance for final answer": 15,
+                "🌳 Independent - Solves the problem with logical reasoning": 25,
+                "🌻 Mastery - Solves quickly, explains reasoning, and applies learning": 30
+    }
+
+    selected_rating = st.selectbox("Rate the Submission", list(uwazi_rubric.keys()))
+    xp_awarded = calculate_xp(selected_rating)
 
                 if st.button("Save Rating"):
                     df_scores = pd.read_csv(SCORES_CSV)
