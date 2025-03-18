@@ -125,14 +125,37 @@ if menu_option == "🏫 Class Management":
 
     cse_name = st.text_input("Enter Your Name (CSE)")
     class_name = st.text_input("Enter Class Name")
-    class_code = generate_code()
+
+    # Load classes data
+    try:
+        df_classes = pd.read_csv(CLASSES_CSV)
+    except FileNotFoundError:
+        df_classes = pd.DataFrame(columns=["Class Code", "Class Name", "CSE"])
+
+    # Check if class already exists
+    existing_classes = df_classes[df_classes["Class Name"].str.lower() == class_name.lower()] if not df_classes.empty else pd.DataFrame()
 
     if st.button("Create Class"):
-        df_classes = pd.read_csv(CLASSES_CSV)
-        new_class = pd.DataFrame({"Class Code": [class_code], "Class Name": [class_name], "CSE": [cse_name]})
-        df_classes = pd.concat([df_classes, new_class], ignore_index=True)
-        df_classes.to_csv(CLASSES_CSV, index=False)
-        st.success(f"✅ Class '{class_name}' created! Class Code: {class_code}")
+        if not cse_name or not class_name:
+            st.warning("⚠️ Please enter both your name and the class name before creating a class.")
+        elif not existing_classes.empty:
+            st.warning(f"⚠️ Class '{class_name}' already exists! Try a different name.")
+        else:
+            class_code = generate_code()
+            new_class = pd.DataFrame({"Class Code": [class_code], "Class Name": [class_name], "CSE": [cse_name]})
+            df_classes = pd.concat([df_classes, new_class], ignore_index=True)
+            df_classes.to_csv(CLASSES_CSV, index=False)
+            st.success(f"✅ Class '{class_name}' created! Class Code: {class_code}")
+
+    # Display existing classes managed by the CSE
+    if not df_classes.empty:
+        st.markdown("### 📋 Your Existing Classes")
+        cse_classes = df_classes[df_classes["CSE"] == cse_name]
+        if not cse_classes.empty:
+            st.dataframe(cse_classes)
+        else:
+            st.info("ℹ️ No classes found under your name. Create one above!")
+
 
 # --------------------------
 # 📊 CSE DASHBOARD: ASSIGN TASKS TO STUDENTS IN THEIR CLASS
