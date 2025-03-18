@@ -53,6 +53,9 @@ if not os.path.exists(TASKS_LIST_CSV):
         ["Day 3", "KIN Siri Time", "Fast Reflex Test", "Perform a reaction-time challenge using stopwatches and movement drills.", "Stopwatches, fast-paced movement drills"],
         ["Day 3", "Solver Time", "Virtual Problem-Solver", "Engage in a VR-based real-world simulation and solve a presented challenge.", "VR headset or interactive AR experience for simulations"]
         ["Day 4", "Soma & Siri Time", "Professional Interview", "Prepare and conduct an interview at the field trip location.", "Notebook, field trip guide"],
+        ["Day 4", "Soma & Siri Time", "Field Trip to Observe Real-World Practitioners", "Visit Apollo space center, and gymnastics/Acrobatics Training Center"],
+        ["Day 4", "Solver Time", "Hands-on Industry Engagement", "Interview professionals using Kinesthetic and Logical-Mathematical Intelligence"],
+        ["Day 4", "Siri Time", "Reflection & Discussion", "Journaling and group discussion on field trip learnings"],
     ]
     df_tasks = pd.DataFrame(tasks_data, columns=["Day", "Element", "Task Name", "Description", "Resources"])
     df_tasks.to_csv(TASKS_LIST_CSV, index=False)
