@@ -401,7 +401,7 @@ if menu_option == "🔐 Admin Dashboard":
             st.download_button("Download Class Data", df_classes.to_csv(index=False), "classes.csv", "text/csv")
         if os.path.exists(STUDENT_CSV):
             st.download_button("Download Student Data", df_students.to_csv(index=False), "students.csv", "text/csv")
-        if os.path.exists(TASKS_CSV):
+        if os.path.exists(TASKS_LIST_CSV):
             st.download_button("Download Task Data", df_tasks.to_csv(index=False), "tasks.csv", "text/csv")
         if os.path.exists(SCORES_CSV):
             st.download_button("Download Score Data", df_scores.to_csv(index=False), "scores.csv", "text/csv")
