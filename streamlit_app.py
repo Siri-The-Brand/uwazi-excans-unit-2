@@ -324,7 +324,57 @@ elif menu_option == "🎓 Student Dashboard":
 # --------------------------
 # 🔐 ADMIN DASHBOARD (View & Manage Data)
 # --------------------------
-elif menu_option == "🔐 Admin Dashboard":
-    st.markdown("### 🔐 Admin Dashboard")
-    df_classes = pd.read_csv(CLASSES_CSV)
-    st.dataframe(df_classes)
+if menu_option == "🔐 Admin Dashboard":
+    admin_password = st.text_input("Enter Admin Password", type="password")
+    if admin_password == "siriadmin123":
+        st.success("✅ Access Granted to Admin Dashboard")
+        
+        # Display class information
+        st.markdown("#### 📚 All Classes")
+        df_classes = pd.read_csv(CLASSES_CSV)
+        if not df_classes.empty:
+            st.dataframe(df_classes)
+        else:
+            st.warning("No class data available.")
+        
+        # Display student data
+        st.markdown("#### 🎓 Registered Students")
+        df_students = pd.read_csv(STUDENT_CSV)
+        if not df_students.empty:
+            st.dataframe(df_students)
+        else:
+            st.warning("No student data available.")
+        
+        # Display task data
+        st.markdown("#### 📌 Assigned Tasks")
+        df_tasks = pd.read_csv(TASKS_CSV)
+        if not df_tasks.empty:
+            st.dataframe(df_tasks)
+        else:
+            st.warning("No task data available.")
+        
+        # Display scores
+        st.markdown("#### 🏆 Student Scores & XP")
+        df_scores = pd.read_csv(SCORES_CSV)
+        if not df_scores.empty:
+            st.dataframe(df_scores)
+        else:
+            st.warning("No scores recorded yet.")
+        
+        # Display submissions with student names
+        st.markdown("#### 📸 Student Submissions")
+        df_submissions = pd.read_csv(SUBMISSIONS_CSV)
+        if not df_submissions.empty:
+            st.dataframe(df_submissions[["Student", "Task", "File Type", "File Name", "Submission Time"]])
+        else:
+            st.warning("No submissions recorded yet.")
+        
+        # Option to download all data
+        st.markdown("### 📥 Download Reports")
+        st.download_button("Download Class Data", df_classes.to_csv(index=False), "classes.csv", "text/csv")
+        st.download_button("Download Student Data", df_students.to_csv(index=False), "students.csv", "text/csv")
+        st.download_button("Download Task Data", df_tasks.to_csv(index=False), "tasks.csv", "text/csv")
+        st.download_button("Download Score Data", df_scores.to_csv(index=False), "scores.csv", "text/csv")
+        st.download_button("Download Submissions Data", df_submissions.to_csv(index=False), "submissions.csv", "text/csv")
+    else:
+        st.error("❌ Incorrect Password. Access Denied.")
