@@ -40,6 +40,11 @@ if not os.path.exists(TASKS_LIST_CSV):
         ["Day 1", "KIN Solver Time", "Tangled Team Escape", "Work as a team to untangle a *Human Knot*.", "Ropes, small objects for team tasks"],
         ["Day 1", "LM Soma Time", "Data Detective", "Analyze a dataset to determine patterns and trends.", "Graph paper, calculators, data analysis charts"],
         ["Day 2", "LM Soma Time", "Predict the Pattern", "Guess the next item in a logic sequence.", "Pattern blocks, prediction exercises"],
+        ["Day 2", "KIN Siri Time", "Acrobat's Flow", "Perform a sequence of controlled acrobatic movements focusing on balance and strength.", "Exercise mats, safety pads"],
+        ["Day 2", "KIN Solver Time", "Speed & Agility Race", "Complete a series of physical coordination challenges such as ladder drills and obstacle navigation.", "Jump ropes, reaction speed tools"],
+        ["Day 2", "LM Soma Time", "Color Code Challenge", "Sort and arrange items based on a color and pattern logic rule.", "Color sorting games, sequencing cards"],
+        ["Day 2", "LM Siri Time", "Chart the Data", "Analyze bar charts to identify key statistical insights and predict trends.", "Bar charts, statistical datasets"],
+        ["Day 2", "LM Solver Time", "Solve the Mystery", "Analyze a case study to uncover logical inconsistencies and solve a problem.", "Case study problems, debate prompts"]
         ["Day 3", "LM Solver Time", "Master of Strategy", "Play a board game like chess and explain strategic moves.", "Board games, scenario-based challenges"],
         ["Day 4", "Soma & Siri Time", "Professional Interview", "Prepare and conduct an interview at the field trip location.", "Notebook, field trip guide"],
     ]
