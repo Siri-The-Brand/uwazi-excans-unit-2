@@ -46,6 +46,12 @@ if not os.path.exists(TASKS_LIST_CSV):
         ["Day 2", "LM Siri Time", "Chart the Data", "Analyze bar charts to identify key statistical insights and predict trends.", "Bar charts, statistical datasets"],
         ["Day 2", "LM Solver Time", "Solve the Mystery", "Analyze a case study to uncover logical inconsistencies and solve a problem.", "Case study problems, debate prompts"]
         ["Day 3", "LM Solver Time", "Master of Strategy", "Play a board game like chess and explain strategic moves.", "Board games, scenario-based challenges"],
+        ["Day 3", "LM Soma Time", "Number Puzzle Challenge", "Solve mathematical puzzles using operations like addition, subtraction, multiplication, and division.", "Math manipulatives, counters"],
+        ["Day 3", "KIN Siri Time", "Steady Hands", "Complete a dexterity test by threading beads or sculpting fine details in clay.", "Fine motor skill activities (clay, threading beads)"],
+        ["Day 3", "LM Solver Time", "Master of Strategy", "Play a board game like chess and explain strategic moves.", "Board games, scenario-based challenges"],
+        ["Day 3", "LM Soma Time", "Mind's Eye", "Interpret abstract optical illusions and explain their logical or artistic significance.", "Optical illusions, abstract art exploration"],
+        ["Day 3", "KIN Siri Time", "Fast Reflex Test", "Perform a reaction-time challenge using stopwatches and movement drills.", "Stopwatches, fast-paced movement drills"],
+        ["Day 3", "Solver Time", "Virtual Problem-Solver", "Engage in a VR-based real-world simulation and solve a presented challenge.", "VR headset or interactive AR experience for simulations"]
         ["Day 4", "Soma & Siri Time", "Professional Interview", "Prepare and conduct an interview at the field trip location.", "Notebook, field trip guide"],
     ]
     df_tasks = pd.DataFrame(tasks_data, columns=["Day", "Element", "Task Name", "Description", "Resources"])
