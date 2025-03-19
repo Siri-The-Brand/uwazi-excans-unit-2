@@ -239,7 +239,7 @@ elif menu_option == "📊 CSE Dashboard":
                 xp_awarded = calculate_xp(rating)
 
 
-                                 # Uwazi Rubric-Based Rating with detailed descriptions
+                # Uwazi Rubric-Based Rating with detailed descriptions
                 uwazi_rubric = {
                 "🪨 Struggles - Needs significant support": 5,
                 "🌿 Beginning - Identifies some elements with help but no solution": 10,
@@ -251,7 +251,7 @@ elif menu_option == "📊 CSE Dashboard":
     selected_rating = st.selectbox("Rate the Submission", list(uwazi_rubric.keys()))
     xp_awarded = calculate_xp(selected_rating)
 
-                if st.button("Save Rating"):
+                 if st.button("Save Rating"):
                     df_scores = pd.read_csv(SCORES_CSV)
                     new_entry = pd.DataFrame({
                         "Student": [selected_student_review],
