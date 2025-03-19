@@ -193,15 +193,36 @@ elif menu_option == "📊 CSE Dashboard":
 
         if students_in_class:
             selected_student = st.selectbox("Select Student", students_in_class)
+# Load tasks list
+task_df = pd.read_csv(TASKS_LIST_CSV)
 
-            # Select Day & Task
-            day_choice = st.selectbox("Select Day", ["Day 1", "Day 2", "Day 3", "Day 4"])
-            task_df = pd.read_csv(TASKS_LIST_CSV)
-            task_options = task_df[task_df["Day"].str.strip().str.lower() == day_choice.lower()]
+# Debugging: Check if all tasks are loaded correctly
+st.write("All tasks loaded from CSV:")
+st.dataframe(task_df)
 
-            # Display available tasks
-            st.dataframe(task_options)
-            selected_task = st.selectbox("Select Task", task_options["Task Name"].tolist())
+# Ensure 'Day' column has no leading/trailing spaces
+task_df["Day"] = task_df["Day"].astype(str).str.strip()
+
+# Debugging: Print unique values in the Day column
+st.write("Unique days available in tasks CSV:", task_df["Day"].unique())
+
+# Select Day & Task
+day_choice = st.selectbox("Select Day", ["Day 1", "Day 2", "Day 3", "Day 4"])
+
+# Select tasks for chosen day
+task_options = task_df[task_df["Day"].str.lower() == day_choice.lower()]
+
+# Debugging: Check what tasks are filtered
+st.write(f"Debug: Selected Day - {day_choice}")
+st.write("Filtered tasks for this day:")
+st.dataframe(task_options)
+
+# Display available tasks
+if task_options.empty:
+    st.warning(f"No tasks found for {day_choice}. Check CSV formatting or data entry.")
+else:
+    st.dataframe(task_options)
+
 
             # Assign Task
             if st.button("Assign Task"):
