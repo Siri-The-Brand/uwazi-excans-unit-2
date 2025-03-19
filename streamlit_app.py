@@ -197,7 +197,7 @@ elif menu_option == "📊 CSE Dashboard":
             # Select Day & Task
             day_choice = st.selectbox("Select Day", ["Day 1", "Day 2", "Day 3", "Day 4"])
             task_df = pd.read_csv(TASKS_LIST_CSV)
-            task_options = task_df[task_df["Day"] == day_choice]
+            task_options = task_df[task_df["Day"].str.strip().str.lower() == day_choice.lower()]
 
             # Display available tasks
             st.dataframe(task_options)
