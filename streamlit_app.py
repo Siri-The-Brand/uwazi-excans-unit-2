@@ -44,14 +44,14 @@ if not os.path.exists(TASKS_LIST_CSV):
         ["Day 2", "KIN Solver Time", "Speed & Agility Race", "Complete a series of physical coordination challenges such as ladder drills and obstacle navigation.", "Jump ropes, reaction speed tools"],
         ["Day 2", "LM Soma Time", "Color Code Challenge", "Sort and arrange items based on a color and pattern logic rule.", "Color sorting games, sequencing cards"],
         ["Day 2", "LM Siri Time", "Chart the Data", "Analyze bar charts to identify key statistical insights and predict trends.", "Bar charts, statistical datasets"],
-        ["Day 2", "LM Solver Time", "Solve the Mystery", "Analyze a case study to uncover logical inconsistencies and solve a problem.", "Case study problems, debate prompts"]
+        ["Day 2", "LM Solver Time", "Solve the Mystery", "Analyze a case study to uncover logical inconsistencies and solve a problem.", "Case study problems, debate prompts"],
         ["Day 3", "LM Solver Time", "Master of Strategy", "Play a board game like chess and explain strategic moves.", "Board games, scenario-based challenges"],
         ["Day 3", "LM Soma Time", "Number Puzzle Challenge", "Solve mathematical puzzles using operations like addition, subtraction, multiplication, and division.", "Math manipulatives, counters"],
         ["Day 3", "KIN Siri Time", "Steady Hands", "Complete a dexterity test by threading beads or sculpting fine details in clay.", "Fine motor skill activities (clay, threading beads)"],
         ["Day 3", "LM Solver Time", "Master of Strategy", "Play a board game like chess and explain strategic moves.", "Board games, scenario-based challenges"],
         ["Day 3", "LM Soma Time", "Mind's Eye", "Interpret abstract optical illusions and explain their logical or artistic significance.", "Optical illusions, abstract art exploration"],
         ["Day 3", "KIN Siri Time", "Fast Reflex Test", "Perform a reaction-time challenge using stopwatches and movement drills.", "Stopwatches, fast-paced movement drills"],
-        ["Day 3", "Solver Time", "Virtual Problem-Solver", "Engage in a VR-based real-world simulation and solve a presented challenge.", "VR headset or interactive AR experience for simulations"]
+        ["Day 3", "Solver Time", "Virtual Problem-Solver", "Engage in a VR-based real-world simulation and solve a presented challenge.", "VR headset or interactive AR experience for simulations"],
         ["Day 4", "Soma & Siri Time", "Professional Interview", "Prepare and conduct an interview at the field trip location.", "Notebook, field trip guide"],
         ["Day 4", "Soma & Siri Time", "Field Trip to Observe Real-World Practitioners", "Visit Apollo space center, and gymnastics/Acrobatics Training Center"],
         ["Day 4", "Solver Time", "Hands-on Industry Engagement", "Interview professionals using Kinesthetic and Logical-Mathematical Intelligence"],
@@ -73,7 +73,7 @@ def check_session_status(class_code):
     session = df_sessions[df_sessions["Class Code"] == class_code]
     return not session.empty and session["Session Status"].iloc[0] == "Active"
     
-def calculate_xp(cse_rating):
+def calculate_xp(uwazi_rating):
     return {
         "🪨 Struggles - Needs significant support": 5,
         "🌿 Beginning - Identifies some elements with help but no solution": 10,
@@ -81,7 +81,6 @@ def calculate_xp(cse_rating):
         "🌳 Independent - Solves the problem with logical reasoning": 25,
         "🌻 Mastery - Solves quickly, explains reasoning, and applies learning": 30
     }.get(uwazi_rating, 0)
-
 
 def calculate_umeme(start_time, end_time):
     """
@@ -162,7 +161,6 @@ if menu_option == "🏫 Class Management":
         else:
             st.info("ℹ️ No classes found under your name. Create one above!")
 
-
 # --------------------------
 # 📊 CSE DASHBOARD: ASSIGN TASKS TO STUDENTS IN THEIR CLASS
 # --------------------------
@@ -238,25 +236,24 @@ elif menu_option == "📊 CSE Dashboard":
                 rating = st.selectbox("Rate the Submission", ["Excellent", "Great", "Good", "Needs Improvement"])
                 xp_awarded = calculate_xp(rating)
 
-
                 # Uwazi Rubric-Based Rating with detailed descriptions
                 uwazi_rubric = {
-                "🪨 Struggles - Needs significant support": 5,
-                "🌿 Beginning - Identifies some elements with help but no solution": 10,
-                "🍁 Progressing - Understands key steps but needs guidance for final answer": 15,
-                "🌳 Independent - Solves the problem with logical reasoning": 25,
-                "🌻 Mastery - Solves quickly, explains reasoning, and applies learning": 30
-    }
+                    "🪨 Struggles - Needs significant support": 5,
+                    "🌿 Beginning - Identifies some elements with help but no solution": 10,
+                    "🍁 Progressing - Understands key steps but needs guidance for final answer": 15,
+                    "🌳 Independent - Solves the problem with logical reasoning": 25,
+                    "🌻 Mastery - Solves quickly, explains reasoning, and applies learning": 30
+                }
 
-    selected_rating = st.selectbox("Rate the Submission", list(uwazi_rubric.keys()))
-    xp_awarded = calculate_xp(selected_rating)
+                selected_rating = st.selectbox("Rate the Submission", list(uwazi_rubric.keys()))
+                xp_awarded = calculate_xp(selected_rating)
 
                 if st.button("Save Rating"):
                     df_scores = pd.read_csv(SCORES_CSV)
                     new_entry = pd.DataFrame({
                         "Student": [selected_student_review],
                         "XP": [xp_awarded],
-                        "Rating": [rating],
+                        "Rating": [selected_rating],
                         "Umeme": [0]
                     })
                     df_scores = pd.concat([df_scores, new_entry], ignore_index=True)
@@ -339,7 +336,7 @@ elif menu_option == "🎓 Student Dashboard":
             end_time = datetime.now()  # End timing the task
             umeme_points = calculate_umeme(start_time, end_time)
 
-            # AI-Generated Feedback for Text Submissions
+                  # AI-Generated Feedback for Text Submissions
             feedback = ai_feedback(submission_data) if submission_type == "Text" else "CSE will review."
 
             submission_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
