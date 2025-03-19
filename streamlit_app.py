@@ -204,7 +204,7 @@ elif menu_option == "📊 CSE Dashboard":
                                    
 
             # Assign Task
-            if st.button("Assign Task"):
+        if st.button("Assign Task"):
                 assigned_tasks = pd.read_csv(TASKS_ASSIGNED_CSV)
                 new_task = pd.DataFrame({
                     "Student": [selected_student],
