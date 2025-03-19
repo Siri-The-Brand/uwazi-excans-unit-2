@@ -192,19 +192,19 @@ elif menu_option == "📊 CSE Dashboard":
         students_in_class = student_df[student_df["Class Code"] == selected_class]["Student Name"].tolist()
 
         if students_in_class:
-            selected_student = st.selectbox("Select Student", students_in_class) 
+            selected_student = st.selectbox("Select Student", students_in_class)
 
-         # Select Day & Task
-        day_choice = st.selectbox("Select Day", ["Day 1", "Day 2", "Day 3", "Day 4"])
-        task_df = pd.read_csv(TASKS_LIST_CSV)
-        task_options = task_df[task_df["Day"] == day_choice]
+            # Select Day & Task
+            day_choice = st.selectbox("Select Day", ["Day 1", "Day 2", "Day 3", "Day 4"])
+            task_df = pd.read_csv(TASKS_LIST_CSV)
+            task_options = task_df[task_df["Day"] == day_choice]
 
-        # Display available tasks
-        st.dataframe(task_options)
-                                   
+            # Display available tasks
+            st.dataframe(task_options)
+            selected_task = st.selectbox("Select Task", task_options["Task Name"].tolist())
 
             # Assign Task
-        if st.button("Assign Task"):
+            if st.button("Assign Task"):
                 assigned_tasks = pd.read_csv(TASKS_ASSIGNED_CSV)
                 new_task = pd.DataFrame({
                     "Student": [selected_student],
